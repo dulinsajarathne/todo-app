@@ -1,0 +1,95 @@
+ 
+  /* Form box styling */
+  .todo-form-box {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #718eac; /* Card background */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Task card styling */
+/* Task card styling */
+.task-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .task-card .ant-typography {
+    margin: 0 !important;
+  }
+  
+  .date-text {
+    font-style: italic;
+  }
+  
+  .date-text {
+    font-size: 12px; /* Smaller font for date text */
+    color: #888;
+  }
+  
+  
+  
+  /* Input and button styling */
+  input {
+    color: #95a5a6; /* Lighter text color */
+    background-color: #124170c2;
+    border: 1px solid #7f8c8d;
+  }
+
+  datepicker{
+    color: #95a5a6; /* Lighter text color */
+    background-color: #124170c2;
+    border: 1px solid #7f8c8d;
+  }
+  
+  button {
+    color: #95a5a6;
+    background-color: #34495e;
+    border: none;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Text color */
+  .ant-typography {
+    color: #95a5a6;
+  }
+  
+  
+  
+  .ant-input::placeholder,
+  .ant-picker::placeholder {
+    color: #7f8c8d;
+  }
+  
+  /* Tab styling */
+  .todo-tabs .ant-tabs-tab {
+    color: #95a5a6;
+  }
+  
+  .todo-tabs .ant-tabs-tab-active {
+    color: #ffffff;
+  }
+  
+  .todo-tabs .ant-tabs-ink-bar {
+    background-color: #95a5a6;
+  }
+  
+  /* Date display */
+  .date-text {
+    color: #83a1a3;
+  }
+
+  
+  
+  
+  .task-card.highlight {
+    background-color: #f0f8ff; /* Light blue background for today's tasks */
+    border-left: 5px solid #007bff; /* Blue border on the left */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Soft shadow effect */
+  }
+  

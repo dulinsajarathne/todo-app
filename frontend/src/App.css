@@ -1,0 +1,117 @@
+/* App.css */
+
+/* General styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Ant Design layout overrides */
+
+.ant-layout-header {
+  background-color: #01172e;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+.ant-layout-content {
+  background-color: #a9cef3;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px); /* Full height minus header */
+}
+
+/* Form container styling */
+.todo-form-container {
+  background-color: #565c63;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Input fields */
+.ant-input {
+  background-color: #2c3e50;
+  color: #95a5a6;
+  border: 1px solid #7f8c8d;
+}
+
+.ant-input::placeholder {
+  color: #7f8c8d;
+}
+
+/* Date picker */
+.ant-picker {
+  background-color: #2c3e50;
+  color: #95a5a6;
+  border: 1px solid #7f8c8d;
+}
+
+/* Button styling */
+.ant-btn {
+  background-color: #7f8c8d;
+  color: #2c3e50;
+  border: none;
+}
+
+.ant-btn:hover {
+  background-color: #95a5a6;
+}
+
+/* Tabs styling */
+.ant-tabs {
+  margin-top: 20px;
+}
+
+.ant-tabs-tab {
+  color: #95a5a6;
+}
+
+.ant-tabs-tab-active {
+  color: #95a5a6;
+}
+
+.ant-tabs-ink-bar {
+  background-color: #7f8c8d;
+}
+
+/* Task list styling */
+.task-list {
+  max-width: 500px;
+  width: 100%;
+}
+
+.task-item {
+  background-color: #34495e;
+  color: #95a5a6;
+  border: 1px solid #7f8c8d;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Centering form and tasks */
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+  .todo-form-container {
+    max-width: 90%;
+  }
+
+  .task-list {
+    max-width: 90%;
+  }
+}
