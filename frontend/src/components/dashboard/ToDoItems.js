@@ -1,4 +1,3 @@
-// ToDoItems.js
 import React from 'react';
 import { Card, Typography, Button, Space } from 'antd';
 import { CheckOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -12,10 +11,10 @@ const ToDoItems = ({ task, isCompleted, onEdit, onDelete, onMarkAsCompleted }) =
 
     return (
         <Card
-            className={`task-card ${isToday(task.date) ? 'highlight' : ''}`}
+            className={`task-card ${isToday(task.dueDate) ? 'highlight' : ''}`}
             key={task.id}
             style={{ marginBottom: '10px' }}
-            bodyStyle={{ padding: '8px' }}
+            styles={{ body: { padding: '8px' } }}  // Updated to use styles.body
         >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ flex: 2 }}>
@@ -25,7 +24,7 @@ const ToDoItems = ({ task, isCompleted, onEdit, onDelete, onMarkAsCompleted }) =
                     </Text>
                     <br />
                     <Text className="date-text" style={{ margin: '0 0 0 8px', fontSize: '12px', color: '#8c8c8c' }}>
-                        {isCompleted ? `Completed on: ${task.date}` : `Due: ${task.date}`}
+                        {isCompleted ? `Completed on: ${task.date}` : `Due: ${task.dueDate}`}
                     </Text>
                 </div>
                 <Space size="small">

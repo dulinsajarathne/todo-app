@@ -1,25 +1,26 @@
 import React from 'react';
-import { Layout, Typography } from 'antd';
-import './App.css';
-import ToDoList from './components/ToDoList';
-
-const { Header, Content } = Layout;
-const { Title } = Typography;
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './context/authContext'; // Import the AuthContext
+import ToDoList from './components/dashboard/ToDoList';
+import Login from './components/auth/login'; // Your Login component
+import ProtectedRoute from './components/protectedRoute'; // Custom ProtectedRoute component
 
 const App = () => {
   return (
-    <Layout style={{ minHeight: '100vh', backgroundColor: '#2c3e50' }}>
-      <Header>
-        <Title level={2} style={{ color: '#c6d9eb', textAlign: 'center', margin: 0 }}>
-          To-Do List
-        </Title>
-      </Header>
-      <Content style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-        <ToDoList />
-      </Content>
-    </Layout>
+    <AuthProvider>
+      <BrowserRouter future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}>
+        <Routes>
+        <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          {/* Protect the ToDoList route */}
+          <Route path="/dashboard" element={<ProtectedRoute><ToDoList /></ProtectedRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 
 export default App;
-///fdcgvjbhkml,;.
