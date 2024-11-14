@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Typography } from 'antd';
-import ToDoForm from './components/ToDoForm';
 import './App.css';
+import ToDoList from './components/ToDoList';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -15,7 +15,7 @@ const App = () => {
         </Title>
       </Header>
       <Content style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-        <ToDoForm />
+        <ToDoList />
       </Content>
     </Layout>
   );

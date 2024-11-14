@@ -1,95 +1,96 @@
- 
-  /* Form box styling */
-  .todo-form-box {
-    width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    background-color: #718eac; /* Card background */
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Task card styling */
+/* Color Palette */
+:root {
+  --primary-color: #124170;
+  --secondary-color: #34495e;
+  --accent-color: #007bff;
+  --light-text-color: #95a5a6;
+  --placeholder-color: #7f8c8d;
+  --highlight-color: #f0f8ff;
+  --highlight-border: #007bff;
+}
+
+/* Form box styling */
+.todo-form-box {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 /* Task card styling */
 .task-card {
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .task-card .ant-typography {
-    margin: 0 !important;
-  }
-  
-  .date-text {
-    font-style: italic;
-  }
-  
-  .date-text {
-    font-size: 12px; /* Smaller font for date text */
-    color: #888;
-  }
-  
-  
-  
-  /* Input and button styling */
-  input {
-    color: #95a5a6; /* Lighter text color */
-    background-color: #124170c2;
-    border: 1px solid #7f8c8d;
-  }
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-  datepicker{
-    color: #95a5a6; /* Lighter text color */
-    background-color: #124170c2;
-    border: 1px solid #7f8c8d;
-  }
-  
-  button {
-    color: #95a5a6;
-    background-color: #34495e;
-    border: none;
-  }
-  
-  button:hover {
-    opacity: 0.8;
-  }
-  
-  /* Text color */
-  .ant-typography {
-    color: #95a5a6;
-  }
-  
-  
-  
-  .ant-input::placeholder,
-  .ant-picker::placeholder {
-    color: #7f8c8d;
-  }
-  
-  /* Tab styling */
-  .todo-tabs .ant-tabs-tab {
-    color: #95a5a6;
-  }
-  
-  .todo-tabs .ant-tabs-tab-active {
-    color: #ffffff;
-  }
-  
-  .todo-tabs .ant-tabs-ink-bar {
-    background-color: #95a5a6;
-  }
-  
-  /* Date display */
-  .date-text {
-    color: #83a1a3;
-  }
+/* Highlight today's tasks */
+.task-card.highlight {
+  background-color: var(--highlight-color);
+  border-left: 5px solid var(--highlight-border);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
 
-  
-  
-  
-  .task-card.highlight {
-    background-color: #f0f8ff; /* Light blue background for today's tasks */
-    border-left: 5px solid #007bff; /* Blue border on the left */
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Soft shadow effect */
-  }
-  
+/* Typography */
+.ant-typography {
+  color: var(--light-text-color);
+  margin: 0 !important;
+}
+
+/* Date text styling */
+.date-text {
+  font-style: italic;
+  font-size: 12px;
+  color: #83a1a3;
+}
+
+/* Input and button styling */
+.ant-input,
+.ant-picker {
+  color: var(--light-text-color);
+  background-color: var(--primary-color);
+  border: 1px solid var(--placeholder-color);
+}
+
+.ant-input::placeholder,
+.ant-picker::placeholder {
+  color: var(--placeholder-color);
+}
+
+/* Button styling */
+button {
+  color: var(--light-text-color);
+  background-color: var(--secondary-color);
+  border: none;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #2c3e50;
+}
+
+/* Tabs styling */
+.todo-tabs .ant-tabs-tab {
+  color: var(--light-text-color);
+}
+
+.todo-tabs .ant-tabs-tab-active {
+  color: #ffffff;
+}
+
+.todo-tabs .ant-tabs-ink-bar {
+  background-color: var(--light-text-color);
+}
+
+/* List item styling */
+.ant-list-item {
+  padding: 8px 12px;
+  background-color: #2b3e50;
+  border-radius: 8px;
+}
+
+/* Card hover effect */
+.task-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
