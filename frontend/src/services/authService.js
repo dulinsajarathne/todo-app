@@ -1,38 +1,39 @@
-// src/services/authService.js
-import axios from 'axios';
-
-// Create an Axios instance with a base URL
-const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Adjust this URL to your backend API
-  withCredentials: true,  // Send cookies (JWT) with requests
-});
+import Cookies from 'js-cookie';
+import axiosInstance from '../common/axiosInstance';
 
 // Login function
 export const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password });
+  const response = await axiosInstance.post('/auth/login', { email, password });
+  if (response.data.token) {
+    // Store the token in cookies (expires in 1 day)
+    Cookies.set('token', response.data.token, { expires: 1, secure: true, sameSite: 'Strict' });
+  }
+
   return response.data;
+};
+
+export const fetchUserData = async (token) => {
+  try {
+    const response = await axiosInstance.get('/api/user/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;  // This should contain the full user data
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
 };
 
 // Register function
 export const register = async (email, password) => {
-  const response = await api.post('/auth/register', { email, password });
+  const response = await axiosInstance.post('/auth/register', { email, password });
   return response.data;
 };
 
-// Fetch tasks (requires authentication)
-export const getTasks = async () => {
-  const response = await api.get('/tasks');
-  return response.data;
-};
+// Logout function (removes token from cookies)
+export const logout = () => {
+  // Remove JWT token from cookies
+  Cookies.remove('token');
 
-// Create task (requires authentication)
-export const createTask = async (taskData) => {
-  const response = await api.post('/tasks', taskData);
-  return response.data;
-};
-
-// Logout function (removes cookie)
-export const logout = async () => {
-  const response = await api.post('/auth/logout');
-  return response.data;
+  // Optionally, navigate to login page (using a method like useNavigate())
 };

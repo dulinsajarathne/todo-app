@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Card, Space, DatePicker, message } from 'antd';
 import { useAuth } from '../../context/authContext';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import ToDoTabs from './ToDoTabs';
 import './ToDoForm.css';
-import axiosInstance from '../../common/axiosInstance'; // Import axiosInstance
+import axiosInstance from '../../common/axiosInstance';
+import Cookies from 'js-cookie'; // Import js-cookie
 
 const ToDoList = () => {
   const { user } = useAuth();
@@ -24,7 +25,8 @@ const ToDoList = () => {
       if (!user) return;
 
       try {
-        const token = localStorage.getItem('token');
+        console.log('ToDoList.js: user:', user);
+        const token = Cookies.get('token'); // Get token from cookies
         const response = await axiosInstance.get('/api/tasks', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -32,7 +34,7 @@ const ToDoList = () => {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           // Token is invalid, remove it and redirect to login
-          localStorage.removeItem('token');
+          Cookies.remove('token');
           window.location.href = '/login';
         } else {
           console.error('Error fetching tasks:', error);
@@ -42,15 +44,6 @@ const ToDoList = () => {
 
     fetchTasks();
   }, [user]);
-
-  // Sort tasks function
-  const sortTasks = (tasks, criteria, order) => {
-    return tasks.sort((a, b) => {
-      const compareA = criteria === 'date' ? moment(a.date) : a.enteredDate;
-      const compareB = criteria === 'date' ? moment(b.date) : b.enteredDate;
-      return order === 'asc' ? compareA - compareB : compareB - compareA;
-    });
-  };
 
   // Add a new task
   const addTask = async () => {
@@ -66,12 +59,12 @@ const ToDoList = () => {
     const newTask = {
       title: taskTitle,
       description: taskDescription || '',
-      dueDate: taskDate.format('YYYY-MM-DD HH:mm'),
+      dueDate: taskDate.toISOString(),
       enteredDate: Date.now(),
     };
 
     try {
-      const token = localStorage.getItem('token');
+      const token = Cookies.get('token'); // Get token from cookies
       const response = await axiosInstance.post('/api/tasks', newTask, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -93,16 +86,40 @@ const ToDoList = () => {
     setTaskDate(moment(task.date, 'YYYY-MM-DD HH:mm'));
   };
 
+  const sortTasks = (tasks, criteria, order) => {
+    const sortedTasks = [...tasks]; // Create a copy to avoid mutating the original array
+
+    return sortedTasks.sort((a, b) => {
+      let compareA, compareB;
+
+      if (criteria === 'date') {
+        compareA = moment(a.dueDate);
+        compareB = moment(b.dueDate);
+      } else if (criteria === 'enteredDate') {
+        compareA = moment(a.createdAt);
+        compareB = moment(b.createdAt);
+      }
+
+      // Use `isBefore` for Moment.js date comparison
+      if (order === 'asc') {
+        return compareA.isBefore(compareB) ? -1 : 1;
+      } else {
+        return compareA.isAfter(compareB) ? -1 : 1;
+      }
+    });
+  };
+
+
   const updateTask = async () => {
     if (taskTitle && taskDate) {
       const updatedTask = { ...editingTask, title: taskTitle, description: taskDescription, date: taskDate.format('YYYY-MM-DD HH:mm') };
 
       try {
-        const token = localStorage.getItem('token');
-        const response = await axiosInstance.put(`/api/tasks/${editingTask.id}`, updatedTask, {
+        const token = Cookies.get('token'); // Get token from cookies
+        const response = await axiosInstance.put(`/api/tasks/${editingTask._id}`, updatedTask, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setTasks(tasks.map((t) => (t.id === editingTask.id ? response.data : t)));
+        setTasks(tasks.map((t) => (t._id === editingTask._id ? response.data : t)));
         setEditingTask(null);
         setTaskTitle('');
         setTaskDescription('');
@@ -117,16 +134,33 @@ const ToDoList = () => {
   };
 
   const markAsCompleted = async (id) => {
-    const task = tasks.find((t) => t.id === id);
+    console.log('Marking task as completed:', id);
+    const task = tasks.find((t) => t._id === id);  // Ensure matching by '_id' not 'id'
 
     try {
-      const token = localStorage.getItem('token');
-      await axiosInstance.patch(`/api/tasks/${id}/complete`, {}, {
+      const token = Cookies.get('token'); // Get token from cookies
+
+      // Send PATCH request to the backend to mark task as completed
+      await axiosInstance.patch(`/api/tasks/${id}/complete`, { completed: true }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setTasks(tasks.filter((t) => t.id !== id));
-      setCompletedTasks([...completedTasks, { ...task, completedDate: moment().format('YYYY-MM-DD HH:mm') }]);
+      // Update local task list by filtering out the completed task and adding it to the completed tasks list
+      setTasks(prevTasks => {
+        return prevTasks.map(task => {
+          if (task._id === id) {
+            return { ...task, completed: true };  // Mark the task as completed
+          }
+          return task;
+        });
+      });  // Use '_id' for MongoDB ID
+      console.log('Tasks:', completedTasks);
+      setCompletedTasks([
+        ...completedTasks,
+        { ...task, completedAt: moment().format('YYYY-MM-DD HH:mm') }
+      ]);
+
+      console.log('Task marked as completed:', task);
     } catch (error) {
       console.error('Error marking task as completed:', error);
       message.error('Failed to mark task as completed.');
@@ -135,14 +169,15 @@ const ToDoList = () => {
 
   const deleteTask = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      console.log(id);
+      const token = Cookies.get('token'); // Get token from cookies
       await axiosInstance.delete(`/api/tasks/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setTasks(tasks.filter((t) => t.id !== id));
-      setCompletedTasks(completedTasks.filter((t) => t.id !== id));
+      setTasks(tasks.filter((task) => task._id !== id));
+      setCompletedTasks(completedTasks.filter((task) => task._id !== id));
+
+      message.success('Task deleted successfully!');
     } catch (error) {
       console.error('Error deleting task:', error);
       message.error('Failed to delete task.');
@@ -151,6 +186,7 @@ const ToDoList = () => {
 
   return (
     <div style={{ width: '600px', margin: '0 auto' }}>
+
       {!user ? (
         <div>Please log in to view and manage your tasks.</div>
       ) : (

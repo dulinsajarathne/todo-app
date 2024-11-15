@@ -55,6 +55,33 @@ router.put('/:id', protect, async (req, res) => {
   }
 });
 
+router.patch('/:id/complete', protect, async (req, res) => {
+  const { id } = req.params;  // Task ID from the URL
+  const userId = req.user.userId; // User ID from authentication
+
+  try {
+    const task = await Task.findOne({ _id: id, userId });
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Update the task to mark it as completed
+    task.completed = true;
+    task.updatedAt = new Date(); // Update the updatedAt field
+
+    const updatedTask = await task.save();
+
+    res.status(200).json(updatedTask);  // Return the updated task
+  } catch (error) {
+    res.status(400).json({ message: 'Error marking task as completed', error });
+  }
+});
+
+
+
+
+
 // Delete a task by ID (Protected)
 router.delete('/:id', protect, async (req, res) => {
   const { id } = req.params;

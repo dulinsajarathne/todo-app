@@ -24,15 +24,19 @@ const ToDoItems = ({ task, isCompleted, onEdit, onDelete, onMarkAsCompleted }) =
                     </Text>
                     <br />
                     <Text className="date-text" style={{ margin: '0 0 0 8px', fontSize: '12px', color: '#8c8c8c' }}>
-                        {isCompleted ? `Completed on: ${task.date}` : `Due: ${task.dueDate}`}
+                        {isCompleted ? `Completed on: ${moment(task.updatedAt).tz(moment.tz.guess()).format('YYYY-MM-DD HH:mm')}` : `Due: ${moment(task.dueDate).tz(moment.tz.guess()).format('YYYY-MM-DD HH:mm')}`}
                     </Text>
                 </div>
                 <Space size="small">
                     {!isCompleted && (
-                        <Button type="text" icon={<CheckOutlined />} onClick={() => onMarkAsCompleted(task.id)} />
-                    )}
-                    <Button type="text" icon={<EditOutlined />} onClick={() => onEdit(task)} />
-                    <Button type="text" danger icon={<DeleteOutlined />} onClick={() => onDelete(task.id)} />
+                        <>
+                            <Button type="text" icon={<CheckOutlined />} onClick={() => onMarkAsCompleted(task._id)} />
+                            <Button type="text" icon={<EditOutlined />} onClick={() => onEdit(task)} />
+                        </>
+                        
+                    ) }
+                    
+                    <Button type="text" danger icon={<DeleteOutlined />} onClick={() => onDelete(task._id)} />
                 </Space>
             </div>
         </Card>

@@ -4,7 +4,11 @@ import { Tabs, List, Button, Space } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import ToDoItems from './ToDoItems';
 
-const ToDoTabs = ({ tasks, completedTasks, onEdit, onDelete, onMarkAsCompleted, sortCriteria, setSortCriteria, sortOrder, setSortOrder, sortTasks }) => {
+const ToDoTabs = ({ tasks, onEdit, onDelete, onMarkAsCompleted, sortCriteria, setSortCriteria, sortOrder, setSortOrder, sortTasks }) => {
+    const filteredToDoTasks = tasks.filter(task => !task.completed);
+    console.log('filteredToDoTasks:', filteredToDoTasks);
+    const filteredCompletedTasks = tasks.filter(task => task.completed);
+    console.log('filteredCompletedTasks:', filteredCompletedTasks);
     const tabItems = [
         {
             key: '1',
@@ -26,7 +30,7 @@ const ToDoTabs = ({ tasks, completedTasks, onEdit, onDelete, onMarkAsCompleted, 
                     </Space>
 
                     <List
-                        dataSource={sortTasks(tasks, sortCriteria, sortOrder)}
+                        dataSource={sortTasks(filteredToDoTasks, sortCriteria, sortOrder)}
                         renderItem={(task) => (
                             <ToDoItems
                                 task={task}
@@ -45,7 +49,7 @@ const ToDoTabs = ({ tasks, completedTasks, onEdit, onDelete, onMarkAsCompleted, 
             label: 'Completed',
             children: (
                 <List
-                    dataSource={sortTasks(completedTasks, sortCriteria, sortOrder)}
+                    dataSource={sortTasks(filteredCompletedTasks, sortCriteria, sortOrder)}
                     renderItem={(task) => (
                         <ToDoItems
                             task={task}

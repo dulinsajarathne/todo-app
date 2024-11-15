@@ -6,6 +6,7 @@ const taskRoutes = require('./routes/tasks'); // Import tasks routes
 const authRoutes = require('./routes/auth'); 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const userRoutes = require('./routes/user');
 
 // Connect to MongoDB
 connectDB();
@@ -22,6 +23,8 @@ app.use('/api/auth', authRoutes);  // Authentication routes
 
 // Use the tasks route
 app.use('/api/tasks', taskRoutes);
+
+app.use('api/user', userRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

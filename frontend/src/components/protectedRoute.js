@@ -1,8 +1,9 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = Cookies.get('token');
 
   console.log('Token in ProtectedRoute:', token); // Debugging line
 

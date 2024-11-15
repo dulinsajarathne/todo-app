@@ -1,31 +1,25 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { API_BASE_URL } from './configs';
+import { message } from 'antd';
 
+// Create an Axios instance with default headers
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000',  // Adjust your base URL here
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: API_BASE_URL,  // Replace with your API base URL
 });
 
-// Optionally you can add interceptors to handle the token
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+// Add Authorization token from cookies to every request
+axiosInstance.interceptors.response.use(
+  response => response, // Continue if the response is successful
+  error => {
+    if (error.response && error.response.status === 401) {
+      // Token is expired or invalid, remove the token and redirect to login
+      Cookies.remove('token');
+      window.location.href = '/login';  // Redirect to the login page
+      message.error('Session expired. Please log in again.');
+    }
+    return Promise.reject(error);
   }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
-
-// You can also handle global error responses with interceptors if needed
-axiosInstance.interceptors.response.use((response) => {
-  return response;
-}, (error) => {
-  if (error.response && error.response.status === 401) {
-    // Handle unauthorized access (e.g., logout, redirect to login)
-  }
-  return Promise.reject(error);
-});
+);
 
 export default axiosInstance;
