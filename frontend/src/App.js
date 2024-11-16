@@ -6,6 +6,8 @@ import Login from './components/auth/login'; // Your Login component
 import ProtectedRoute from './components/protectedRoute'; // Custom ProtectedRoute component
 import Profile from './components/pages/profile';
 import Layout from './components/layout/layout';
+import LandingPage from './components/pages/landingPage';
+import Register from './components/auth/register';
 
 const App = () => {
   return (
@@ -16,8 +18,9 @@ const App = () => {
     <AuthProvider>
       
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           {/* Protect the ToDoList route */}
           <Route path="/" element={<Layout />}>
             <Route path="dashboard" element={<ProtectedRoute><ToDoList /></ProtectedRoute>} />

@@ -86,6 +86,7 @@ router.patch('/:id/complete', protect, async (req, res) => {
 router.delete('/:id', protect, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
+  console.log(req.user.email);
 
   try {
     const deletedTask = await Task.findOneAndDelete({ _id: id, userId });

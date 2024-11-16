@@ -1,54 +1,59 @@
-// routes/auth.js
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
-const User = require('../models/User'); // Import the User model
+const User = require('../models/User');
+const sendEmail = require('../utils/sendEmail');
 const router = express.Router();
 
-// User Registration Route
-router.post(
-  '/register',
-  // Validation middleware
-  [
-    body('name').not().isEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Please provide a valid email'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+router.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
 
-    const { name, email, password } = req.body;
+  try {
+    // Create user with a verification token
+    const token = crypto.randomBytes(32).toString('hex');
+    const user = new User({ name, email, password, verificationToken: token, isVerified: false });
+    await user.save();
 
-    try {
-      // Check if user already exists
-      const userExists = await User.findOne({ email });
-      if (userExists) {
-        return res.status(400).json({ message: 'User already exists' });
-      }
+    // Send verification email
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
+    const message = `Hello ${name},\n\nPlease verify your email by clicking the link below:\n${verificationUrl}\n\nIf you did not request this, please ignore this email.`;
+    await sendEmail(email, 'Email Verification', message);
 
-      // Create a new user
-      const newUser = new User({ name, email, password });
-      await newUser.save();
-
-      // Send response
-      res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error });
-    }
+    res.status(201).json({ message: 'Verification email sent. Please check your inbox.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
   }
-);
+});
+// Email Verification
+router.get('/verify-email/:token', async (req, res) => {
+  const { token } = req.params;
 
-// User Login Route
+  try {
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token.' });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.json({ message: 'Email verified successfully.' });
+  } catch (error) {
+    console.error('Error in /verify-email:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+// Login Endpoint
 router.post(
   '/login',
-  // Validation middleware
   [
     body('email').isEmail().withMessage('Please provide a valid email'),
-    body('password').not().isEmpty().withMessage('Password is required'),
+    body('password').notEmpty().withMessage('Password is required'),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -59,28 +64,21 @@ router.post(
     const { email, password } = req.body;
 
     try {
-      // Find user by email
       const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+
+      if (!user || !user.isVerified) {
+        return res.status(400).json({ message: 'Email not verified or user does not exist.' });
       }
 
-      // Check if password matches
       const isMatch = await user.matchPassword(password);
       if (!isMatch) {
         return res.status(400).json({ message: 'Invalid credentials' });
       }
 
-      // Create and sign JWT token
-      const token = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.JWT_SECRET,  // You should define a JWT secret in .env
-        { expiresIn: '1h' }
-      );
-
-      // Send the token in the response
+      const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
       res.json({ token });
     } catch (error) {
+      console.error('Error in /login:', error);
       res.status(500).json({ message: 'Server error', error });
     }
   }
