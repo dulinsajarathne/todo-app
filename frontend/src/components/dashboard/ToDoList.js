@@ -190,7 +190,7 @@ const ToDoList = () => {
       {!user ? (
         <div>Please log in to view and manage your tasks.</div>
       ) : (
-        <Card>
+        <Card style={{background:'#093a6b' }}>
           <Space direction="vertical" style={{ width: '100%' }}>
             {errorMessage && <div style={{ color: 'red', marginBottom: '8px' }}>{errorMessage}</div>}
             <Input

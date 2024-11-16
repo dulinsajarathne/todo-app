@@ -8,6 +8,8 @@ import Profile from './components/pages/profile';
 import Layout from './components/layout/layout';
 import LandingPage from './components/pages/landingPage';
 import Register from './components/auth/register';
+import ForgotPassword from './components/auth/forgotPassword';
+import ResetPassword from './components/auth/resetPassword';
 
 const App = () => {
   return (
@@ -21,6 +23,8 @@ const App = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword/>} />
+          <Route path="/reset-password/:token" element={<ResetPassword/>}/>
           {/* Protect the ToDoList route */}
           <Route path="/" element={<Layout />}>
             <Route path="dashboard" element={<ProtectedRoute><ToDoList /></ProtectedRoute>} />

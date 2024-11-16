@@ -121,7 +121,7 @@ router.post('/resend-verification', async (req, res) => {
     }
 
     // Generate a new verification URL (using the existing token)
-    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${user.verificationToken}`;
+    const verificationUrl = `${process.env.BACKEND_URL}/verify-email/${user.verificationToken}`;
     const message = `Hello ${user.name},\n\nPlease verify your email by clicking the link below:\n${verificationUrl}\n\nIf you did not request this, please ignore this email.`;
 
     // Send the email again
@@ -132,6 +132,56 @@ router.post('/resend-verification', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Server error', error });
   }
+});
+
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  console.log('Received email for password reset:', req.body.email);
+
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate a reset token (implement token generation logic)
+    const resetToken = user.getResetPasswordToken();
+    await user.save();
+
+    // Send password reset email
+    const resetUrl = `${process.env.FRONTEND_URL}reset-password/${resetToken}`;
+    const message = `Click on the link to reset your password: ${resetUrl}`;
+    await sendEmail(user.email, 'Password Reset Request', message);
+
+    res.status(200).json({ message: 'Reset email sent' });
+  } catch (error) {
+    console.error('Forgot Password Error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/reset-password/:token', async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid or expired token' });
+  }
+
+  // Update the password
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+  res.status(200).json({ message: 'Password has been reset successfully' });
 });
 
 module.exports = router;

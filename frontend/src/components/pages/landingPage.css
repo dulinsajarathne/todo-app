@@ -1,0 +1,51 @@
+.landing-container {
+    display: flex;
+    justify-content: center; /* Centers the content horizontally */
+    align-items: center; /* Centers the content vertically */
+    height: 100vh;
+    overflow: hidden;
+    position: relative;  /* Ensures the image section is positioned properly behind the content */
+  }
+  
+  .text-section {
+    padding: 30px;
+    color: black;
+    background-color: white; /* White background for the text section */
+    width: 80%;  /* Adjust the width of the text section */
+    max-width: 600px;  /* Limit the max width to 600px */
+    z-index: 1; /* Ensure the text is above the blurred background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow around the section */
+    border: 2px solid #e0e0e0; /* Light border color for the text section */
+    text-align: center; /* Centers the text */
+  }
+  
+  .text-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .text-section p {
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.7); /* Darker text color for readability */
+    margin-bottom: 30px;
+  }
+  
+  .text-section .ant-btn {
+    margin-right: 10px; /* Space between buttons */
+  }
+  
+  .image-section {
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    filter: blur(8px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0; /* Ensure the image is behind the text section */
+  }
+  
