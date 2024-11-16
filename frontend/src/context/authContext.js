@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = () => {
     Cookies.remove('token');
     setUser(null);
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   const value = {
