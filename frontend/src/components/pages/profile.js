@@ -1,6 +1,7 @@
 // src/pages/Profile.js
 import React, { useEffect, useState } from 'react';
-import { Input, Button, Card, message } from 'antd';
+import { Input, Button, Card, message,Row, Col, Spin  } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axiosInstance from '../../common/axiosInstance';
 
 const Profile = () => {
@@ -62,48 +63,89 @@ const Profile = () => {
   };
 
   if (!user) {
-    return <p>Loading...</p>;
+    return <Spin tip="Loading" size="large"> </Spin>;
   }
 
   return (
-    <Card title="User Profile" style={{ maxWidth: '400px', margin: '20px auto' }}>
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
+    <Card
+      title="User Profile"
+      bordered={false}
+      style={{
+        maxWidth: '500px',
+        margin: '20px auto',
+        borderRadius: '10px',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <p style={{ fontSize: '16px' }}>
+            <UserOutlined style={{ marginRight: '8px' }} />
+            {user.name}
+          </p>
+          <br/>
+          <p style={{ fontSize: '16px'}}>
+            <strong>Email:</strong> {user.email}
+          </p>
+        </Col>
 
-      <Button
-        type="default"
-        onClick={() => setShowPasswordForm(!showPasswordForm)}
-        style={{ marginTop: '20px' }}
-      >
-        {showPasswordForm ? 'Cancel' : 'Change Password'}
-      </Button>
-
-      {showPasswordForm && (
-        <>
-          <h3 style={{ marginTop: '20px' }}>Change Password</h3>
-          <Input.Password
-            placeholder="Current Password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            style={{ marginBottom: '10px' }}
-          />
-          <Input.Password
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            style={{ marginBottom: '10px' }}
-          />
-          <Input.Password
-            placeholder="Confirm New Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            style={{ marginBottom: '10px' }}
-          />
-          <Button type="primary" loading={loading} onClick={handleChangePassword}>
-            Save Password
+        <Col span={24}>
+          <Button
+            type="default"
+            onClick={() => setShowPasswordForm(!showPasswordForm)}
+            style={{ width: '100%' }}
+          >
+            {showPasswordForm ? 'Cancel' : 'Change Password'}
           </Button>
-        </>
-      )}
+        </Col>
+
+        {showPasswordForm && (
+          <>
+            <Col span={24}>
+              <h3 style={{ marginTop: '20px', fontSize: '18px' }}>Change Password</h3>
+            </Col>
+
+            <Col span={24}>
+              <Input.Password
+                placeholder="Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                style={{ marginBottom: '10px' }}
+                prefix={<LockOutlined />}
+              />
+            </Col>
+            <Col span={24}>
+              <Input.Password
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                style={{ marginBottom: '10px' }}
+                prefix={<LockOutlined />}
+              />
+            </Col>
+            <Col span={24}>
+              <Input.Password
+                placeholder="Confirm New Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                style={{ marginBottom: '20px' }}
+                prefix={<LockOutlined />}
+              />
+            </Col>
+
+            <Col span={24}>
+              <Button
+                type="primary"
+                loading={loading}
+                onClick={handleChangePassword}
+                style={{ width: '100%' }}
+              >
+                Save Password
+              </Button>
+            </Col>
+          </>
+        )}
+      </Row>
     </Card>
   );
 };
