@@ -6,9 +6,8 @@ import ToDoItems from './ToDoItems';
 
 const ToDoTabs = ({ tasks, onEdit, onDelete, onMarkAsCompleted, sortCriteria, setSortCriteria, sortOrder, setSortOrder, sortTasks }) => {
     const filteredToDoTasks = tasks.filter(task => !task.completed);
-    console.log('filteredToDoTasks:', filteredToDoTasks);
     const filteredCompletedTasks = tasks.filter(task => task.completed);
-    console.log('filteredCompletedTasks:', filteredCompletedTasks);
+    
     const tabItems = [
         {
             key: '1',

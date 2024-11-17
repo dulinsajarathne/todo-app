@@ -5,7 +5,7 @@ import { message } from 'antd';
 
 // Create an Axios instance with default headers
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,  // Replace with your API base URL
+  baseURL: API_BASE_URL,  
 });
 
 // Add Authorization token from cookies to every request

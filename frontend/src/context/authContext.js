@@ -11,14 +11,10 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const AuthProvider = ({ children }) => {
-  
+export const AuthProvider = ({ children }) => {  
   const [email, setEmail] = useState(''); // Define email state
   const [password, setPassword] = useState(''); // Define password state
-  const navigate = useNavigate();
-
-  
-  
+  const navigate = useNavigate();  
 
   // Login function
   const handleLogin = async () => {
@@ -54,9 +50,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Error Response:', error.response?.data);
       message.error(`Login failed: ${errorMessage}`);
     }
-  };
-  
-  
+  };  
   
 
   // Logout function

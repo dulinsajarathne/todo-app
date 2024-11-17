@@ -1,5 +1,5 @@
 import { Input, Button, Form } from "antd";
-import { useAuth } from "../../context/authContext"; // Use the auth context
+import { useAuth } from "../../context/authContext"; 
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../common/backgroundImage.jpg";
 import "../pages/landingPage.css";

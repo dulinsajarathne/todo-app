@@ -34,8 +34,7 @@ const ToDoItems = ({ task, isCompleted, onEdit, onDelete, onMarkAsCompleted }) =
                             <Button type="text" icon={<EditOutlined />} onClick={() => onEdit(task)} />
                         </>
                         
-                    ) }
-                    
+                    ) }                    
                     <Button type="text" danger icon={<DeleteOutlined />} onClick={() => onDelete(task._id)} />
                 </Space>
             </div>

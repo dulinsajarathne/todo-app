@@ -31,8 +31,7 @@ const Header = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 30px', background: '#093a6b' }}>
-      <h2 style={{ color: '#fff', margin: 0 }}>My Dashboard</h2>
-      {/* Pass `items` prop directly to Dropdown */}
+      <h2 style={{ color: '#fff', margin: 0 }}>TaskMate Dashboard</h2>
       <Dropdown menu={{ items: menuItems }} placement="bottomRight">
         <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
           <Avatar src={user?.profilePicture} icon={<UserOutlined />} />

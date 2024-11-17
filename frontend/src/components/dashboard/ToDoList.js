@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 import ToDoTabs from './ToDoTabs';
 import './ToDoForm.css';
 import axiosInstance from '../../common/axiosInstance';
-import Cookies from 'js-cookie'; // Import js-cookie
+
 
 const ToDoList = () => {
   const { user } = useAuth();
@@ -19,27 +19,18 @@ const ToDoList = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [sortCriteria, setSortCriteria] = useState('date');
 
-  useEffect(() => {
-    console.log("user in ToDoList:", user); // Debugging log
-  }, [user]);
-  
   // Fetch tasks from backend
   useEffect(() => {
     const fetchTasks = async () => {
-      
-      try {
-        console.log('ToDoList.js: user:', user);
-        console.log('Cookies:', Cookies.get('token'));  // Log the entire cookie storage in the browser
 
-       // const token = Cookies.get('token'); // Get token from cookies
+      try {
+        // Log the entire cookie storage in the browser
         const response = await axiosInstance.get('/api/tasks', {
           withCredentials: true,
         });
         setTasks(response.data);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          // Token is invalid, remove it and redirect to login
-          Cookies.remove('token');
           window.location.href = '/login';
         } else {
           console.error('Error fetching tasks:', error);
@@ -79,7 +70,6 @@ const ToDoList = () => {
       setTaskDate(null);
       setErrorMessage('');
     } catch (error) {
-      console.error('Error adding task:', error);
       message.error('Failed to add task.');
     }
   };
@@ -130,7 +120,6 @@ const ToDoList = () => {
         setTaskDescription('');
         setTaskDate(null);
       } catch (error) {
-        console.error('Error updating task:', error);
         message.error('Failed to update task.');
       }
     } else {
@@ -139,7 +128,6 @@ const ToDoList = () => {
   };
 
   const markAsCompleted = async (id) => {
-    console.log('Marking task as completed:', id);
     const task = tasks.find((t) => t._id === id);  // Ensure matching by '_id' not 'id'
 
     try {
@@ -158,8 +146,7 @@ const ToDoList = () => {
           }
           return task;
         });
-      });  // Use '_id' for MongoDB ID
-      console.log('Tasks:', completedTasks);
+      });
       setCompletedTasks([
         ...completedTasks,
         { ...task, completedAt: moment().format('YYYY-MM-DD HH:mm') }
@@ -174,7 +161,6 @@ const ToDoList = () => {
 
   const deleteTask = async (id) => {
     try {
-     // const token = Cookies.get('token'); // Get token from cookies
       await axiosInstance.delete(`/api/tasks/${id}`, {
         withCredentials: true,
       });
@@ -191,7 +177,7 @@ const ToDoList = () => {
 
   return (
     <div style={{ width: '600px', margin: '0 auto' }}>
-      <Card style={{background:'#093a6b' }}>
+      <Card style={{ background: '#093a6b' }}>
         <Space direction="vertical" style={{ width: '100%' }}>
           {errorMessage && <div style={{ color: 'red', marginBottom: '8px' }}>{errorMessage}</div>}
           <Input

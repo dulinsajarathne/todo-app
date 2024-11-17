@@ -86,9 +86,7 @@ const Register = () => {
   return (
     <div className="landing-container">
       <div className="text-section" style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-
-
-        <h2>Register</h2>
+        <h2 style={{padding:'20px 0'}}>Register</h2>
         <Form onFinish={handleRegister} layout="vertical">
           <Form.Item
             label="Full Name"
@@ -165,8 +163,6 @@ const Register = () => {
       </div>
       <div className="image-section"
         style={{ backgroundImage: `url(${backgroundImage})` }}></div>
-
-
     </div>
   );
 };
