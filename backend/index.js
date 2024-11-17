@@ -6,7 +6,8 @@ const taskRoutes = require('./routes/tasks'); // Import tasks routes
 const authRoutes = require('./routes/auth'); 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const userRoutes = require('./routes/user');const cookieParser = require('cookie-parser');
+const userRoutes = require('./routes/user');
+const cookieParser = require('cookie-parser');
 
 
 
@@ -19,7 +20,7 @@ app.use(cookieParser());
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: 'http://localhost:3000', // Allow the React app to connect to the server
     credentials: true, // Allow cookies to be sent
   })
 );
@@ -33,7 +34,7 @@ app.use('/api/auth', authRoutes);  // Authentication routes
 // Use the tasks route
 app.use('/api/tasks', taskRoutes);
 
-app.use('api/user', userRoutes);
+app.use('/api/user', userRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

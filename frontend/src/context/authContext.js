@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { message } from 'antd';
@@ -12,29 +12,20 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  
   const [email, setEmail] = useState(''); // Define email state
   const [password, setPassword] = useState(''); // Define password state
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = Cookies.get('token');
-    console.log('AuthProvider: Token from cookies after useEffect runs:', token); // Debugging log
-
-    if (token) {
-      setUser({ token });
-      console.log('User set with token:', { token }); // Debugging log
-    } else {
-      setUser(null);
-      console.log('No token found, setting user to false.'); // Debugging log
-    }
-  }, []);
+  
+  
 
   // Login function
   const handleLogin = async () => {
     try {
       console.log('Login Request Data:', { email, password });
   
+      // Make the login request
       const response = await axiosInstance.post('/api/auth/login', {
         email,
         password,
@@ -42,15 +33,20 @@ export const AuthProvider = ({ children }) => {
   
       console.log('API Response:', response);
   
-      if (response.status === 200) {
-        Cookies.set('token', response.data.token, { expires: 1 }); // Set token to cookies
-        console.log('Token after setting (in handleLogin):', Cookies.get('token')); // Debugging log
-        
-        message.success('Login Successful!');
-        setUser({ token: response.data.token });
-        navigate('/dashboard');
+      if (response.status === 200 && response.data.token) {
+        // Directly access the token from the response
+        const { token } = response.data;
+  
+        // Store token and user data in the context or state
+        if (token) {
+          
+          message.success('Login Successful!');
+          navigate('/dashboard');
+        } else {
+          message.error('Login successful but no token found in response.');
+        }
       } else {
-        message.error('Invalid response from server. No token received.');
+        message.error('Invalid response from server.');
       }
     } catch (error) {
       console.error('Login failed:', error);
@@ -59,6 +55,9 @@ export const AuthProvider = ({ children }) => {
       message.error(`Login failed: ${errorMessage}`);
     }
   };
+  
+  
+  
 
   // Logout function
   const handleLogout = async () => {
@@ -73,7 +72,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = {
-    user,
     handleLogin,
     handleLogout,
     setEmail, // Expose setEmail to the component

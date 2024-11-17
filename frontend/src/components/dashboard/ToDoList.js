@@ -26,10 +26,11 @@ const ToDoList = () => {
   // Fetch tasks from backend
   useEffect(() => {
     const fetchTasks = async () => {
-      if (!user) return;
-
+      
       try {
         console.log('ToDoList.js: user:', user);
+        console.log('Cookies:', Cookies.get('token'));  // Log the entire cookie storage in the browser
+
        // const token = Cookies.get('token'); // Get token from cookies
         const response = await axiosInstance.get('/api/tasks', {
           withCredentials: true,
@@ -190,43 +191,38 @@ const ToDoList = () => {
 
   return (
     <div style={{ width: '600px', margin: '0 auto' }}>
-
-      {!user ? (
-        <div>Please log in to view and manage your tasks.</div>
-      ) : (
-        <Card style={{background:'#093a6b' }}>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            {errorMessage && <div style={{ color: 'red', marginBottom: '8px' }}>{errorMessage}</div>}
-            <Input
-              placeholder="Title"
-              value={taskTitle}
-              onChange={(e) => {
-                setTaskTitle(e.target.value);
-                setErrorMessage('');
-              }}
-            />
-            <Input
-              placeholder="Description (optional)"
-              value={taskDescription}
-              onChange={(e) => setTaskDescription(e.target.value)}
-            />
-            <DatePicker
-              placeholder="Select date and time"
-              style={{ width: '100%' }}
-              value={taskDate}
-              showTime
-              format="YYYY-MM-DD HH:mm"
-              onChange={(date) => {
-                setTaskDate(date);
-                setErrorMessage('');
-              }}
-            />
-            <Button type="primary" onClick={editingTask ? updateTask : addTask}>
-              {editingTask ? 'Update Task' : 'Add Task'}
-            </Button>
-          </Space>
-        </Card>
-      )}
+      <Card style={{background:'#093a6b' }}>
+        <Space direction="vertical" style={{ width: '100%' }}>
+          {errorMessage && <div style={{ color: 'red', marginBottom: '8px' }}>{errorMessage}</div>}
+          <Input
+            placeholder="Title"
+            value={taskTitle}
+            onChange={(e) => {
+              setTaskTitle(e.target.value);
+              setErrorMessage('');
+            }}
+          />
+          <Input
+            placeholder="Description (optional)"
+            value={taskDescription}
+            onChange={(e) => setTaskDescription(e.target.value)}
+          />
+          <DatePicker
+            placeholder="Select date and time"
+            style={{ width: '100%' }}
+            value={taskDate}
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            onChange={(date) => {
+              setTaskDate(date);
+              setErrorMessage('');
+            }}
+          />
+          <Button type="primary" onClick={editingTask ? updateTask : addTask}>
+            {editingTask ? 'Update Task' : 'Add Task'}
+          </Button>
+        </Space>
+      </Card>
       <ToDoTabs
         tasks={tasks}
         completedTasks={completedTasks}

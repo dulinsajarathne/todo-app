@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Input, Button, Form, message } from 'antd';
 import axiosInstance from '../../common/axiosInstance';
-import { Link } from 'react-router-dom';
 import '../pages/landingPage.css';
 import backgroundImage from "../../common/backgroundImage.jpg";
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false); // Track if email was sent
   const [email, setEmail] = useState(''); // Track email input value
+  const navigate = useNavigate();
 
   // Register handler
   const handleRegister = async (values) => {
@@ -77,18 +78,16 @@ const Register = () => {
     return Promise.resolve();
   };
 
-  const validateConfirmPassword = (_, value, { getFieldValue }) => {
-    if (!value || value !== getFieldValue('password')) {
-      return Promise.reject(new Error('The two passwords do not match'));
-    }
-    return Promise.resolve();
+  const goToLogin = () => {
+    navigate("/login");
   };
+
 
   return (
     <div className="landing-container">
-    <div className="text-section" style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
+      <div className="text-section" style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
 
-      
+
         <h2>Register</h2>
         <Form onFinish={handleRegister} layout="vertical">
           <Form.Item
@@ -112,21 +111,20 @@ const Register = () => {
           <Form.Item
             label="Password"
             name="password"
-            rules={[{ required: true, message: 'Please input your password!' }, validatePassword]}>
+            rules={[
+              { required: true, message: 'Password is required' },
+              { validator: validatePassword },
+            ]}
+          >
             <Input.Password />
           </Form.Item>
 
-          {/* Confirm Password Field */}
           <Form.Item
             label="Confirm Password"
             name="confirmPassword"
             dependencies={['password']}
             rules={[
-              {
-                required: true,
-                message: 'Please confirm your password!'
-              },
-              validateConfirmPassword,
+              { required: true, message: 'Please confirm your password!' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
@@ -139,6 +137,7 @@ const Register = () => {
           >
             <Input.Password />
           </Form.Item>
+
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={isLoading}>
@@ -157,15 +156,16 @@ const Register = () => {
             >
               Resend verification email
             </Button>
-            <div style={{ marginTop: '10px' }}>
-              <Link to="/login">Go to Login</Link> {/* Add "Go to Login" link */}
-            </div>
+            <Button type="link" onClick={goToLogin}>
+              Login
+            </Button>
+
           </div>
         )}
       </div>
       <div className="image-section"
-      style={{ backgroundImage: `url(${backgroundImage})` }}></div>
-    
+        style={{ backgroundImage: `url(${backgroundImage})` }}></div>
+
 
     </div>
   );

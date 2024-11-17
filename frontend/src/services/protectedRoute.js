@@ -1,50 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import axiosInstance from '../common/axiosInstance';
-import { Spin } from 'antd';
-import { useAuth } from '../context/authContext';
+import axiosInstance from '../common/axiosInstance'; // Import your axios instance
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // State to track authentication status
 
-  
   useEffect(() => {
+    // Check if the user is authenticated by making a request to a protected route
     const checkAuth = async () => {
       try {
-        const response = await axiosInstance.get('/api/auth/check-auth', { withCredentials: true });
-        console.log('Authentication check response:', response); // Debugging log
-        setIsAuthenticated(response.data.isAuthenticated);
+        // Make an API call to verify if the user is authenticated
+        const response = await axiosInstance.get('/api/auth/check', { withCredentials: true });
+        if (response.status === 200) {
+          setIsAuthenticated(true); // User is authenticated
+        }
       } catch (error) {
-        console.error('Authentication check failed:', error); // Debugging log
-        setIsAuthenticated(false);
+        setIsAuthenticated(false); // User is not authenticated
       }
     };
 
-    checkAuth();
+    checkAuth(); // Run the authentication check
   }, []);
 
-  console.log('isAuthenticated:', isAuthenticated); // Debugging log
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-  // Display loading spinner while checking authentication status
+  // While checking, render a loading state or nothing
   if (isAuthenticated === null) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Spin size="large" tip="Loading...">
-          <div style={{ height: '100px' }} /> {/* Nested element to satisfy Spin requirement */}
-        </Spin>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  // Redirect to login if not authenticated
+  // If the user is not authenticated, redirect to the login page
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Render the protected content if authenticated
+  // If authenticated, render the children (protected components)
   return children;
 };
 

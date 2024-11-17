@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Input, Button, Form, message } from 'antd';
 import axiosInstance from '../../common/axiosInstance';
+import { useNavigate } from 'react-router-dom';
+import backgroundImage from "../../common/backgroundImage.jpg";
+import "../pages/landingPage.css";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Handler for input changes
   const onEmailChange = (e) => {
@@ -38,8 +42,13 @@ const ForgotPassword = () => {
     }
   };
 
+  const goToLogin = () => {
+    navigate("/login");
+  };
+
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
+    <div className="landing-container">
+    <div className='text-section' style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
       <h2 style={{padding:'20px 0'}}>Forgot Password</h2>
       <Form layout="vertical">
         <Form.Item >
@@ -59,7 +68,14 @@ const ForgotPassword = () => {
           Send Reset Email
         </Button>
       </Form>
+     
+      <Button type="link" onClick={goToLogin}>
+          Login
+        </Button>
     </div>
+     <div className="image-section"
+     style={{ backgroundImage: `url(${backgroundImage})` }}></div>
+   </div>
   );
 };
 

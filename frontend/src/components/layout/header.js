@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Dropdown, Menu } from 'antd';
+import { Avatar, Dropdown } from 'antd';
 import { UserOutlined, LogoutOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
