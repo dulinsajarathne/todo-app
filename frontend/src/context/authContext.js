@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { message } from 'antd';
 import axiosInstance from '../common/axiosInstance'; // Import axiosInstance
 
@@ -19,16 +18,12 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const handleLogin = async () => {
     try {
-      console.log('Login Request Data:', { email, password });
-  
       // Make the login request
       const response = await axiosInstance.post('/api/auth/login', {
         email,
         password,
       }, { withCredentials: true });
-  
-      console.log('API Response:', response);
-  
+    
       if (response.status === 200 && response.data.token) {
         // Directly access the token from the response
         const { token } = response.data;
@@ -57,7 +52,6 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = async () => {
     try {
       await axiosInstance.post('/api/auth/logout');
-      Cookies.remove('token'); // Remove token from cookies
       message.success('Logged out successfully');
       navigate('/', { replace: true });
     } catch (error) {

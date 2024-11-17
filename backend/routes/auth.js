@@ -21,8 +21,7 @@ router.post('/register',
     }
 
     const { name, email, password } = req.body;
-    console.log('Received registration request:', req.body);
-
+    
     try {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -30,7 +29,6 @@ router.post('/register',
       }
       const token = crypto.randomBytes(32).toString('hex');
       const user = new User({ name, email, password, verificationToken: token, isVerified: false });
-      console.log('User created:', user);
       await user.save();
 
       // Send verification email
@@ -102,10 +100,10 @@ router.post(
 
       res.cookie('token', token, {
         httpOnly: true,  // Cannot be accessed through JavaScript
-        secure: process.env.NODE_ENV === 'production',  // Only over HTTPS in production
-        sameSite: 'Strict',  // Prevents CSRF attacks
-        maxAge: 60 * 60 * 1000,  // 1 hour expiry
-        path: '/'  // Available across the entire app
+        secure: process.env.NODE_ENV === 'production' ? true : false, // Only over HTTPS in production
+        sameSite: process.env.COOKIE_SAMESITE || 'Strict', // Use the value from .env or default to 'Strict'
+        maxAge: process.env.COOKIE_MAX_AGE || 60 * 60 * 1000, // 1 hour expiry (default in ms)
+        path: '/', // Available across the entire app
       });
 
 
