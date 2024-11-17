@@ -8,14 +8,15 @@ const sendEmail = async (to, subject, text) => {
   while (attempts < maxAttempts) {
     try {
       const transporter = nodemailer.createTransport({
-        host: 'smtp.mail.us-east-1.awsapps.com', // Change based on your region
-        port: 465, // Use 465 for SSL, 587 for TLS
-        secure: true, // Set to true for SSL
+        host: process.env.WORKMAIL_HOST, // Change based on your region
+        port: process.env.WORKMAIL_PORT, // Get the port from the .env file
+        secure: process.env.WORKMAIL_SECURE === 'true',
         auth: {
           user: process.env.WORKMAIL_EMAIL, // Your WorkMail email address
           pass: process.env.WORKMAIL_PASSWORD, // Your WorkMail password
         },
-      });
+      }); // Convert string to boolean
+   
 
       const mailOptions = {
         from: process.env.WORKMAIL_EMAIL, // Sender email address
