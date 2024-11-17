@@ -6,14 +6,23 @@ const taskRoutes = require('./routes/tasks'); // Import tasks routes
 const authRoutes = require('./routes/auth'); 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/user');const cookieParser = require('cookie-parser');
+
+
 
 // Connect to MongoDB
 connectDB();
 
+app.use(cookieParser());
+
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true, // Allow cookies to be sent
+  })
+);
 
 // Middleware to parse JSON requests
 app.use(express.json());

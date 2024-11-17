@@ -95,14 +95,37 @@ router.post(
         return res.status(400).json({ message: 'Invalid credentials' });
       }
 
-      const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.json({ token });
+      const token = jwt.sign(
+        { userId: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Set to true in production
+        sameSite: 'Strict',
+        maxAge: 3600000, // 1 hour
+      });
+      res.status(200).json({ message: 'Login successful' });
     } catch (error) {
       console.error('Error in /login:', error);
       res.status(500).json({ message: 'Server error', error });
     }
   }
 );
+
+
+// Logout Endpoint
+router.post('/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Strict',
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
 
 // Resend verification route
 router.post('/resend-verification', async (req, res) => {
@@ -183,5 +206,30 @@ router.post('/reset-password/:token', async (req, res) => {
   await user.save();
   res.status(200).json({ message: 'Password has been reset successfully' });
 });
+
+// In your auth routes file (e.g., auth.js)
+router.get('/check-auth', (req, res) => {
+  const token = req.cookies.token;
+  
+  
+  if (!token) {
+    
+    return res.json({ isAuthenticated: false });
+  }
+  
+  try {
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    res.json({ isAuthenticated: true, user: decoded });  // Send decoded user info
+  } catch (error) {
+
+    res.json({ isAuthenticated: false });
+  }
+});
+
+
+
+
 
 module.exports = router;

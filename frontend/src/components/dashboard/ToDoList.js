@@ -19,6 +19,10 @@ const ToDoList = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [sortCriteria, setSortCriteria] = useState('date');
 
+  useEffect(() => {
+    console.log("user in ToDoList:", user); // Debugging log
+  }, [user]);
+  
   // Fetch tasks from backend
   useEffect(() => {
     const fetchTasks = async () => {
@@ -26,9 +30,9 @@ const ToDoList = () => {
 
       try {
         console.log('ToDoList.js: user:', user);
-        const token = Cookies.get('token'); // Get token from cookies
+       // const token = Cookies.get('token'); // Get token from cookies
         const response = await axiosInstance.get('/api/tasks', {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
         });
         setTasks(response.data);
       } catch (error) {
@@ -64,9 +68,9 @@ const ToDoList = () => {
     };
 
     try {
-      const token = Cookies.get('token'); // Get token from cookies
+      //const token = Cookies.get('token'); // Get token from cookies
       const response = await axiosInstance.post('/api/tasks', newTask, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
       setTasks([...tasks, response.data]);
       setTaskTitle('');
@@ -115,9 +119,9 @@ const ToDoList = () => {
       const updatedTask = { ...editingTask, title: taskTitle, description: taskDescription, date: taskDate.format('YYYY-MM-DD HH:mm') };
 
       try {
-        const token = Cookies.get('token'); // Get token from cookies
+        //const token = Cookies.get('token'); // Get token from cookies
         const response = await axiosInstance.put(`/api/tasks/${editingTask._id}`, updatedTask, {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
         });
         setTasks(tasks.map((t) => (t._id === editingTask._id ? response.data : t)));
         setEditingTask(null);
@@ -138,11 +142,11 @@ const ToDoList = () => {
     const task = tasks.find((t) => t._id === id);  // Ensure matching by '_id' not 'id'
 
     try {
-      const token = Cookies.get('token'); // Get token from cookies
+      //const token = Cookies.get('token'); // Get token from cookies
 
       // Send PATCH request to the backend to mark task as completed
       await axiosInstance.patch(`/api/tasks/${id}/complete`, { completed: true }, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
 
       // Update local task list by filtering out the completed task and adding it to the completed tasks list
@@ -169,9 +173,9 @@ const ToDoList = () => {
 
   const deleteTask = async (id) => {
     try {
-      const token = Cookies.get('token'); // Get token from cookies
+     // const token = Cookies.get('token'); // Get token from cookies
       await axiosInstance.delete(`/api/tasks/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
 
       setTasks(tasks.filter((task) => task._id !== id));

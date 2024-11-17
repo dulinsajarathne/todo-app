@@ -19,59 +19,57 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = Cookies.get('token');
+    console.log('AuthProvider: Token from cookies after useEffect runs:', token); // Debugging log
+
     if (token) {
       setUser({ token });
+      console.log('User set with token:', { token }); // Debugging log
+    } else {
+      setUser(null);
+      console.log('No token found, setting user to false.'); // Debugging log
     }
   }, []);
 
   // Login function
   const handleLogin = async () => {
     try {
-      // Debug: Log email and password before sending the request
       console.log('Login Request Data:', { email, password });
   
       const response = await axiosInstance.post('/api/auth/login', {
         email,
         password,
-      });
+      }, { withCredentials: true });
   
       console.log('API Response:', response);
   
-      if (response?.data?.token) {
-        const token = response.data.token;
-  
-        // Save token in cookies
-        Cookies.set('token', token, { expires: 1 });
-
-        setUser({ token });
-  
-        message.success('Login Successful!');
+      if (response.status === 200) {
+        Cookies.set('token', response.data.token, { expires: 1 }); // Set token to cookies
+        console.log('Token after setting (in handleLogin):', Cookies.get('token')); // Debugging log
         
-        navigate('/dashboard', { replace: true });
-        console.log(user);
-        // Navigate to the dashboard
-        // setTimeout(() => {
-        //   navigate('/dashboard', { replace: true });
-        // }, 100);
+        message.success('Login Successful!');
+        setUser({ token: response.data.token });
+        navigate('/dashboard');
       } else {
         message.error('Invalid response from server. No token received.');
       }
     } catch (error) {
       console.error('Login failed:', error);
-  
-      // Debug: Log the error response from the server
       const errorMessage = error.response?.data?.message || 'Unknown error occurred';
       console.error('Error Response:', error.response?.data);
-  
       message.error(`Login failed: ${errorMessage}`);
     }
   };
-  
 
-  const handleLogout = () => {
-    Cookies.remove('token');
-    setUser(null);
-    navigate('/', { replace: true });
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post('/api/auth/logout');
+      Cookies.remove('token'); // Remove token from cookies
+      message.success('Logged out successfully');
+      navigate('/', { replace: true });
+    } catch (error) {
+      message.error('Logout failed');
+    }
   };
 
   const value = {
