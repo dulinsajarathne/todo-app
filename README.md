@@ -38,19 +38,30 @@ Create a .env file at the root of the project (make sure it's excluded from Git 
 ``` 
 env
 PORT=5000
-MONGODB_URI=mongodb+srv://<your-mongo-username>:<your-mongo-password>@cluster0.mongodb.net/todo?retryWrites=true&w=majority
-JWT_SECRET=your_jwt_secret_key
+
+MONGODB_URI=<Your MongoDB URI>
+
+JWT_SECRET=<Your JWT Secret Key>
 JWT_EXPIRES_IN=1h
+
 BACKEND_URL=http://localhost:5000/api/auth/
 FRONTEND_URL=http://localhost:3000/
-WORKMAIL_EMAIL=your-email@example.com
-WORKMAIL_PASSWORD=your-workmail-password
+
+#AWS Workmail Configuration
+WORKMAIL_HOST=smtp.mail.us-east-1.awsapps.com # Change based on your region
+WORKMAIL_PORT=465  # Use 465 for SSL, 587 for TLS
+WORKMAIL_SECURE=true
+WORKMAIL_EMAIL=<Your Workmail Email>
+WORKMAIL_PASSWORD=<Your Workmail Password>
+
 NODE_ENV=development
-COOKIE_SECRET=your_cookie_secret_key
-COOKIE_SECURE=false
+COOKIE_SECRET=<Your Cookie Secret Key>
+COOKIE_SECURE=false # Set to 'true' in production
 COOKIE_SAMESITE=Strict
-COOKIE_MAX_AGE=3600000
+COOKIE_MAX_AGE=3600000  # 1 hour in milliseconds
+
 CLIENT_URL=http://localhost:3000
+
 ```
 
 ### 3. Install Dependencies
