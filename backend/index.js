@@ -9,18 +9,15 @@ const PORT = process.env.PORT || 3000;
 const userRoutes = require('./routes/user');
 const cookieParser = require('cookie-parser');
 
-
-
 // Connect to MongoDB
 connectDB();
 
 app.use(cookieParser());
 
-
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Allow the React app to connect to the server
+    origin: process.env.CLIENT_URL,
     credentials: true, // Allow cookies to be sent
   })
 );
@@ -41,10 +38,6 @@ app.get('/', (req, res) => {
   res.send('Hello, Express.js!');
 });
 
-// Health check route
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running smoothly!' });
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

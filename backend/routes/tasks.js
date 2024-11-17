@@ -55,6 +55,7 @@ router.put('/:id', protect, async (req, res) => {
   }
 });
 
+// Mark a task as completed by ID (Protected)
 router.patch('/:id/complete', protect, async (req, res) => {
   const { id } = req.params;  // Task ID from the URL
   const userId = req.user.userId; // User ID from authentication
@@ -77,8 +78,6 @@ router.patch('/:id/complete', protect, async (req, res) => {
     res.status(400).json({ message: 'Error marking task as completed', error });
   }
 });
-
-
 
 
 

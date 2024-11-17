@@ -23,29 +23,27 @@ router.post('/register',
     const { name, email, password } = req.body;
     console.log('Received registration request:', req.body);
 
-  try {
-    // Create user with a verification token
+    try {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(200).json({ message: 'Email is already registered' });
+      }
+      const token = crypto.randomBytes(32).toString('hex');
+      const user = new User({ name, email, password, verificationToken: token, isVerified: false });
+      console.log('User created:', user);
+      await user.save();
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      // If user exists, send a 409 error with a message
-      return res.status(200).json({ message: 'Email is already registered' });
+      // Send verification email
+      const verificationUrl = `${process.env.BACKEND_URL}api/auth/verify-email/${token}`;
+      const message = `Hello ${name},\n\nPlease verify your email by clicking the link below:\n${verificationUrl}\n\nIf you did not request this, please ignore this email.`;
+      await sendEmail(email, 'Email Verification', message);
+
+      res.status(201).json({ message: 'Verification email sent. Please check your inbox.' });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
     }
-    const token = crypto.randomBytes(32).toString('hex');
-    const user = new User({ name, email, password, verificationToken: token, isVerified: false });
-    console.log('User created:', user);
-    await user.save();
+  });
 
-    // Send verification email
-    const verificationUrl = `${process.env.BACKEND_URL}api/auth/verify-email/${token}`;
-    const message = `Hello ${name},\n\nPlease verify your email by clicking the link below:\n${verificationUrl}\n\nIf you did not request this, please ignore this email.`;
-    await sendEmail(email, 'Email Verification', message);
-
-    res.status(201).json({ message: 'Verification email sent. Please check your inbox.' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
-  }
-});
 // Email Verification
 router.get('/verify-email/:token', async (req, res) => {
   const { token } = req.params;
@@ -87,8 +85,6 @@ router.post(
       res.clearCookie('token', { path: '/' });
       const user = await User.findOne({ email });
 
-      
-
       if (!user || !user.isVerified) {
         return res.status(400).json({ message: 'Email not verified or user does not exist.' });
       }
@@ -111,7 +107,7 @@ router.post(
         maxAge: 60 * 60 * 1000,  // 1 hour expiry
         path: '/'  // Available across the entire app
       });
-      
+
 
       res.status(200).json({ token });
     } catch (error) {
@@ -163,10 +159,10 @@ router.post('/resend-verification', async (req, res) => {
   }
 });
 
+//Forgot-Password
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
   console.log('Received email for password reset:', req.body.email);
-
 
   try {
     const user = await User.findOne({ email });
@@ -190,6 +186,8 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
+
+// Reset Password from verification email
 router.post('/reset-password/:token', async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -203,7 +201,6 @@ router.post('/reset-password/:token', async (req, res) => {
   if (!user) {
     return res.status(400).json({ message: 'Invalid or expired token' });
   }
-
   // Update the password
   user.password = password;
   user.resetPasswordToken = undefined;
@@ -220,13 +217,11 @@ router.get('/check', (req, res) => {
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-
   // Verify token
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err) => {
     if (err) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-
     // Token is valid, return success
     res.status(200).json({ message: 'Authenticated' });
   });
@@ -234,7 +229,7 @@ router.get('/check', (req, res) => {
 
 
 
- // Import the token verification middleware
+// Import the token verification middleware
 
 // The route to get authenticated user's details
 router.get('/user', verifyToken, (req, res) => {
